@@ -1,0 +1,47 @@
+trigger:
+- master
+
+strategy:
+  matrix:
+    windows:
+      imageName: 'windows-latest'
+      rustup_toolchain: stable
+      rust_target: 'x86_64-pc-windows-msvc'
+      artifact: 'win_x86_64'
+    mac:
+      imageName: 'macOS-latest'
+      rustup_toolchain: stable
+      rust_target: 'x86_64-apple-darwin'
+      artifact: 'mac_x86_64'
+    linux:
+      imageName: 'ubuntu-latest'
+      rustup_toolchain: stable
+      rust_target: 'x86_64-unknown-linux-gnu'
+      artifact: 'linux_x86_64'
+
+pool:
+  vmImage: $(imageName)
+
+# https://nbsoftsolutions.com/blog/azure-pipelines-for-rust-projects
+steps:
+  - script: |
+      curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
+      echo "##vso[task.setvariable variable=PATH;]$PATH:$HOME/.cargo/bin"
+    displayName: Install rust
+    condition: ne( variables['Agent.OS'], 'Windows_NT' )
+  - script: |
+      curl -sSf -o rustup-init.exe https://win.rustup.rs
+      rustup-init.exe -y --default-host %RUST_TARGET% --default-toolchain %RUSTUP_TOOLCHAIN%
+      echo "##vso[task.setvariable variable=PATH;]%PATH%;%USERPROFILE%\.cargo\bin"
+    displayName: Install rust (win)
+    condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  - script: cargo rustc --target $(RUST_TARGET) --release --bin ck2json -- -C lto
+    displayName: Compile ck2json
+  - publish: 'target/$(RUST_TARGET)/release/ck2json'
+    displayName: 'Publish artifacts'
+    condition: ne( variables['Agent.OS'], 'Windows_NT' )
+    artifact: $(artifact)
+  - publish: 'target\$(RUST_TARGET)\release\ck2json.exe'
+    displayName: 'Publish artifacts (win)'
+    condition: eq( variables['Agent.OS'], 'Windows_NT' )
+    artifact: $(artifact)

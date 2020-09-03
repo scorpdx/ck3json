@@ -1,0 +1,42 @@
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+
+identifier = @{ tag }
+tag = @{ (ASCII_ALPHANUMERIC | "_" | "-" | ".")+ }
+
+object = {
+    "{" ~ "}" |
+    "{" ~ pair* ~ "}"
+}
+
+pair = { identifier ~ "=" ~ value }
+
+array = {
+    "{" ~ "}" |
+    "{" ~ value* ~ "}"
+}
+
+value = _{ object | array | date | string | number | boolean | tag }
+
+boolean = @{ ("yes" | "no") ~ !ASCII_ALPHA }
+
+string = ${ "\"" ~ inner ~ "\"" }
+inner = @{ char* }
+char = {
+    !("\"" | "\\") ~ ANY
+    | "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t")
+    | "\\" ~ ("u" ~ ASCII_HEX_DIGIT{4})
+}
+
+number = @{ float | int }
+
+int = @{"-"? ~ ASCII_DIGIT+}
+float = @{int? ~ "." ~ ASCII_DIGIT+ ~ "f"?}
+
+date = ${ ("\"" ~ date_inner ~ "\"") | date_inner }
+date_inner = @{ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
+
+file = _{
+    SOI ~
+    pair* ~
+    EOI
+}
