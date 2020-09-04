@@ -70,7 +70,6 @@ name = "ck3json"
 version = "0.2.0"
 dependencies = [
  "clap",
- "encoding_rs",
  "encoding_rs_io",
  "pest",
  "pest_derive",

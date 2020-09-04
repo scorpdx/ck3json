@@ -7,7 +7,6 @@ extern crate pest_derive;
 use std::io::prelude::*;
 use std::fs::File;
 
-use encoding_rs::WINDOWS_1252;
 use encoding_rs_io::DecodeReaderBytesBuilder;
 
 mod json;
@@ -34,7 +33,7 @@ fn main() {
     let filename = matches.value_of("file").unwrap();
     let file = File::open(filename).expect("cannot open file");
 
-    let mut transcoded = DecodeReaderBytesBuilder::new().encoding(Some(WINDOWS_1252)).build(file);
+    let mut transcoded = DecodeReaderBytesBuilder::new().build(file);
 
     let mut file_text = String::new();
     transcoded.read_to_string(&mut file_text).expect("cannot transcode file");
@@ -42,7 +41,6 @@ fn main() {
     let grammar_name = matches.value_of("grammar").unwrap();
     let json = match grammar_name {
         "ck3txt" => ck3parser::parse(&file_text).expect("unsuccessful parse"),
-//      "cultures" => cultureparser::parse(&file_text).expect("unsuccessful parse"),
         _ => unreachable!("unknown grammar type")
     };
 
