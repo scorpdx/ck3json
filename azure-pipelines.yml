@@ -35,7 +35,7 @@ steps:
       echo "##vso[task.setvariable variable=PATH;]%PATH%;%USERPROFILE%\.cargo\bin"
     displayName: Install rust (win)
     condition: eq( variables['Agent.OS'], 'Windows_NT' )
-  - script: cargo rustc --target $(RUST_TARGET) --release --bin ck3json -- -C lto
+  - script: cargo build --target $(RUST_TARGET) --release --bin ck3json --
     displayName: Compile ck3json
   - publish: 'target/$(RUST_TARGET)/release/ck3json'
     displayName: 'Publish artifacts'
