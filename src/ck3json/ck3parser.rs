@@ -14,7 +14,8 @@ pub fn parse(ck3txt: &str) -> Result<JSONValue, Error<Rule>> {
     use pest::iterators::Pair;
     fn parse_value(pair: Pair<Rule>) -> JSONValue {
         match pair.as_rule() {
-            Rule::object => JSONValue::Object(
+            Rule::rgb
+            | Rule::object => JSONValue::Object(
                 pair.into_inner()
                     .map(|pair| {
                         let mut inner_rules = pair.into_inner();
@@ -38,7 +39,7 @@ pub fn parse(ck3txt: &str) -> Result<JSONValue, Error<Rule>> {
             | Rule::identifier
             | Rule::pair
             | Rule::value
-            | Rule::inner
+            | Rule::string_inner
             | Rule::char
             | Rule::int
             | Rule::float
