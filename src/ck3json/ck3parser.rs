@@ -9,26 +9,28 @@ pub struct CK3Parser;
 use crate::json::JSONValue;
 
 pub fn parse(ck3txt: &str) -> Result<JSONValue, Error<Rule>> {
-    let parsing_iter = CK3Parser::parse(Rule::file, ck3txt)?.skip(1).next().unwrap();
-
     use pest::iterators::Pair;
+
+    fn parse_pair(pair: Pair<Rule>) -> (&str, JSONValue) {
+        let mut inner_rules = pair.into_inner();
+        let inner_pair = inner_rules
+            .next()
+            .expect("inner_pair was None");
+        let name = inner_pair.as_str();
+        let value = parse_value(inner_rules.next().expect("inner_rules.next() was None"));
+        (name, value)
+    }
+
     fn parse_value(pair: Pair<Rule>) -> JSONValue {
         match pair.as_rule() {
             Rule::rgb
             | Rule::object => JSONValue::Object(
                 pair.into_inner()
-                    .map(|pair| {
-                        let mut inner_rules = pair.into_inner();
-                        let inner_pair = inner_rules
-                            .next()
-                            .expect("inner_pair was None");
-                        let name = inner_pair.as_str();
-                        let value = parse_value(inner_rules.next().expect("inner_rules.next() was None"));
-                        (name, value)
-                    })
+                    .map(|pair| parse_pair(pair))
                     .collect(),
             ),
             Rule::array => JSONValue::Array(pair.into_inner().map(parse_value).collect()),
+            Rule::array_pair => JSONValue::Object(vec![parse_pair(pair.into_inner().next().unwrap())]),
             Rule::string
             | Rule::date => JSONValue::String(pair.into_inner().next().unwrap().as_str()),
             Rule::tag => JSONValue::String(pair.as_str()),
@@ -36,6 +38,7 @@ pub fn parse(ck3txt: &str) -> Result<JSONValue, Error<Rule>> {
             Rule::boolean => JSONValue::Boolean(pair.as_str() == "yes"),
             Rule::file
             | Rule::EOI
+            | Rule::body
             | Rule::identifier
             | Rule::pair
             | Rule::value
@@ -53,5 +56,7 @@ pub fn parse(ck3txt: &str) -> Result<JSONValue, Error<Rule>> {
         }
     }
 
-    Ok(parse_value(parsing_iter))
+    let parsing_iter = CK3Parser::parse(Rule::file, ck3txt).expect("unsuccessful parse").next().unwrap();
+
+    Ok(JSONValue::Object(parsing_iter.into_inner().map(|pair| parse_pair(pair)).collect()))
 }

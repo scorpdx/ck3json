@@ -12,8 +12,9 @@ pair = { identifier ~ "=" ~ value }
 
 array = {
     "{" ~ "}" |
-    "{" ~ value* ~ "}"
+    "{" ~ (array_pair | value)* ~ "}"
 }
+array_pair = { pair }
 
 value = _{ object | array | rgb | date | string | number | boolean | tag }
 
@@ -35,8 +36,10 @@ rgb = {"rgb" ~ array}
 date = ${ ("\"" ~ date_inner ~ "\"") | date_inner }
 date_inner = @{ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
 
+body = { pair* }
+
 file = _{
     SOI ~
-    pair* ~
+    body ~
     EOI
 }
