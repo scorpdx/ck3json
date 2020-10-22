@@ -1,5 +1,5 @@
 # ck3json
-Convert CK3 text format files to JSON
+Convert CK3 files to JSON
 
 ## Usage
 ```
