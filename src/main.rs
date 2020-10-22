@@ -6,7 +6,6 @@ extern crate pest_derive;
 
 use std::io::prelude::*;
 use std::fs::File;
-
 use encoding_rs_io::DecodeReaderBytesBuilder;
 
 mod json;
@@ -19,30 +18,46 @@ fn main() {
     let matches = App::new("ck3json")
         .version("0.1.0")
         .author("J. Zebedee <zebedee@code.gripe>")
-        .about("Convert CK3txt-format files to JSON")
+        .about("Convert CK3 files to JSON")
         .arg(Arg::with_name("file")
                  .required(true)
                  .takes_value(true)
                  .index(1)
-                 .help("CK3txt-format file to parse"))
+                 .help("CK3 file to parse"))
         .arg(Arg::with_name("grammar")
-                 .possible_values(&["ck3txt"])
+                 .possible_values(&["ck3txt", "ck3bin"])
                  .default_value("ck3txt"))
         .get_matches();
 
     let filename = matches.value_of("file").unwrap();
-    let file = File::open(filename).expect("cannot open file");
-
-    let mut transcoded = DecodeReaderBytesBuilder::new().build(file);
-
-    let mut file_text = String::new();
-    transcoded.read_to_string(&mut file_text).expect("cannot transcode file");
+    let mut file = File::open(filename).expect("cannot open file");
 
     let grammar_name = matches.value_of("grammar").unwrap();
-    let json = match grammar_name {
-        "ck3txt" => ck3parser::parse(&file_text).expect("unsuccessful parse"),
+    match grammar_name {
+        "ck3txt" => {
+            let reader = DecodeReaderBytesBuilder::new();
+            let mut transcoded = reader.build(file);
+
+            let mut file_text = String::new();
+            transcoded.read_to_string(&mut file_text).expect("cannot transcode file");
+        
+            let x = ck3parser::parse(&file_text).expect("unsuccessful parse");
+            println!("{}", serialize_jsonvalue(&x));
+        },
+        "ck3bin" => {
+            let mut bin_buf = Vec::new();
+            file.read_to_end(&mut bin_buf).expect("failed to read binary file");
+            
+            use ck3save::{Melter, FailedResolveStrategy};
+            let melt_bytes = Melter::new()
+                .with_on_failed_resolve(FailedResolveStrategy::Stringify)
+                .melt(&bin_buf)
+                .expect("failed to melt ck3bin");
+            let melt_string = std::str::from_utf8(&melt_bytes).unwrap();
+
+            let x = ck3parser::parse(&melt_string).expect("failed to parse melted ck3bin text");
+            println!("{}", serialize_jsonvalue(&x));
+        },
         _ => unreachable!("unknown grammar type")
     };
-
-    println!("{}", serialize_jsonvalue(&json));
 }
