@@ -1,8 +1,8 @@
 [package]
 name = "ck3json"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["J. Zebedee <zebedee@code.gripe>"]
-description = "Convert CK3txt-format files to JSON"
+description = "Convert CK3 files to JSON"
 license = "MIT"
 repository = "https://github.com/scorpdx/ck3json"
 edition = "2018"
