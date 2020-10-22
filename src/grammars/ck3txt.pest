@@ -36,10 +36,12 @@ rgb = {"rgb" ~ array}
 date = ${ ("\"" ~ date_inner ~ "\"") | date_inner }
 date_inner = @{ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
 
+save_id = { "SAV" ~ ASCII_ALPHANUMERIC{20} }
 body = { pair* }
 
 file = _{
     SOI ~
+    save_id? ~
     body ~
     EOI
 }

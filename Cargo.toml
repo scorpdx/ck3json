@@ -1,17 +1,18 @@
 [package]
 name = "ck3json"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["J. Zebedee <zebedee@code.gripe>"]
-description = "Convert CK3txt-format files to JSON"
+description = "Convert CK3 files to JSON"
 license = "MIT"
 repository = "https://github.com/scorpdx/ck3json"
 edition = "2018"
 
 [dependencies]
-clap = "^2.33.0"
-pest = "^2.1.1"
-pest_derive = "^2.1.0"
-encoding_rs_io = "^0.1.6"
+clap = "2.33.0"
+pest = "2.1.1"
+pest_derive = "2.1.0"
+encoding_rs_io = "0.1.6"
+ck3save = "0.1.3"
 
 [profile.release]
 opt-level = 3

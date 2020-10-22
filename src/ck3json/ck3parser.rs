@@ -47,6 +47,7 @@ pub fn parse(ck3txt: &str) -> Result<JSONValue, Error<Rule>> {
             | Rule::int
             | Rule::float
             | Rule::date_inner
+            | Rule::save_id
             | Rule::WHITESPACE => {
                 println!("Rule:    {:?}", pair.as_rule());
                 println!("Span:    {:?}", pair.as_span());
@@ -56,7 +57,13 @@ pub fn parse(ck3txt: &str) -> Result<JSONValue, Error<Rule>> {
         }
     }
 
-    let parsing_iter = CK3Parser::parse(Rule::file, ck3txt).expect("unsuccessful parse").next().unwrap();
+    let mut file = CK3Parser::parse(Rule::file, &ck3txt).expect("unsuccessful parse");
+    let first = file.next().unwrap();
+    let main = match first.as_rule() {
+        Rule::save_id => file.next().unwrap(),
+        _ => first
+    };
+    let body = JSONValue::Object(main.into_inner().map(|pair| parse_pair(pair)).collect());
 
-    Ok(JSONValue::Object(parsing_iter.into_inner().map(|pair| parse_pair(pair)).collect()))
+    Ok(body)
 }
