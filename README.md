@@ -11,8 +11,8 @@ FLAGS:
     -V, --version    Prints version information
 
 ARGS:
-    <file>       CK3txt-format file to parse
-    <grammar>     [default: ck3txt]  [possible values: ck3txt]
+    <file>       CK3 file to parse
+    <grammar>     [default: ck3txt]  [possible values: ck3txt, ck3bin]
 ```
 
 ## Crate
