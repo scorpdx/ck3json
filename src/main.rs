@@ -16,7 +16,7 @@ use ck3json::*;
 
 fn main() {
     let matches = App::new("ck3json")
-        .version("0.1.0")
+        .version("0.3.1")
         .author("J. Zebedee <zebedee@code.gripe>")
         .about("Convert CK3 files to JSON")
         .arg(Arg::with_name("file")
@@ -27,6 +27,7 @@ fn main() {
         .arg(Arg::with_name("grammar")
                  .possible_values(&["ck3txt", "ck3bin"])
                  .default_value("ck3txt"))
+        .arg(Arg::from_usage("-m --melt-only 'Melt ck3bin-format and return text without converting to JSON'"))
         .get_matches();
 
     let filename = matches.value_of("file").unwrap();
@@ -50,13 +51,19 @@ fn main() {
             
             use ck3save::{Melter, FailedResolveStrategy};
             let melt_bytes = Melter::new()
-                .with_on_failed_resolve(FailedResolveStrategy::Stringify)
+                .with_on_failed_resolve(FailedResolveStrategy::Ignore)
                 .melt(&bin_buf)
                 .expect("failed to melt ck3bin");
             let melt_string = std::str::from_utf8(&melt_bytes).unwrap();
 
-            let x = ck3parser::parse(&melt_string).expect("failed to parse melted ck3bin text");
-            println!("{}", serialize_jsonvalue(&x));
+            let melt_only = matches.is_present("melt-only");
+            match melt_only {
+                true => println!("{}", melt_string),
+                false => {
+                    let parsed = ck3parser::parse(&melt_string).expect("failed to parse melted ck3bin text");
+                    println!("{}", serialize_jsonvalue(&parsed));
+                }
+            };
         },
         _ => unreachable!("unknown grammar type")
     };
