@@ -79,7 +79,7 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "ck3json"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "ck3save",
  "clap",
@@ -90,12 +90,11 @@ dependencies = [
 
 [[package]]
 name = "ck3save"
-version = "0.1.3"
+version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0eab536b05a8659fd9901fab76edb337b6ab01c60766d40101c8d6c12c5d5f2"
+checksum = "c5912d6ed888f85ef6118277be255e89b3553aa6ef3d3e28002173581bb2fc61"
 dependencies = [
  "jomini",
- "once_cell",
  "serde",
  "twoway",
  "zip",
@@ -190,9 +189,9 @@ dependencies = [
 
 [[package]]
 name = "jomini"
-version = "0.7.2"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2922cd01c32a2001ac4b9933766a9a5bfc3621f8a932e661fa2046e5215994e8"
+checksum = "114ee8e30a3e881de31279e80fbf754c4fce5d2c59c844acffeb4612f2332767"
 dependencies = [
  "jomini_derive",
  "serde",
@@ -234,12 +233,6 @@ checksum = "791daaae1ed6889560f8c4359194f56648355540573244a5448a83ba1ecc7435"
 dependencies = [
  "adler32",
 ]
-
-[[package]]
-name = "once_cell"
-version = "1.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "260e51e7efe62b592207e9e13a68e43692a7a279171d6ba57abd208bf23645ad"
 
 [[package]]
 name = "opaque-debug"

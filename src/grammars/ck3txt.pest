@@ -1,7 +1,7 @@
 WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
 
 identifier = @{ tag }
-tag = @{ (ASCII_ALPHANUMERIC | "_" | "-" | ".")+ }
+tag = @{ (ASCII_ALPHANUMERIC | "_" | "-" | "." | ":")+ }
 
 object = {
     "{" ~ "}" |
