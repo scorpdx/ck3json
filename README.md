@@ -1,14 +1,17 @@
 # ck3json
 Convert CK3 files to JSON
 
+Supports CK3 version 1.2.1
+
 ## Usage
 ```
 USAGE:
-    ck3json.exe <file> [grammar]
+    ck3json [FLAGS] <file> [grammar]
 
 FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+    -h, --help         Prints help information
+    -m, --melt-only    Melt ck3bin-format and return text without converting to JSON
+    -V, --version      Prints version information
 
 ARGS:
     <file>       CK3 file to parse
