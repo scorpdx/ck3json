@@ -20,3 +20,6 @@ ARGS:
 
 ## Crate
 [![Crates.io](https://img.shields.io/crates/v/ck3json)](https://crates.io/crates/ck3json)
+
+## Projects using ck3json
+* [CK3 Family Tree Exporter](https://github.com/blastentwice/CK3-Family-Tree-Exporter-To-Gramps-Fast-JSON-Version)
